@@ -25,75 +25,41 @@ import { CalendarToday } from '@mui/icons-material';
 const InsightsDashboard = () => {
   const chartRef = useRef(null);
   const barChartRef = useRef(null);
+  const doughnutChartRef = useRef(null);
   const [barChartData, setBarChartData] = useState([]);
   const [spendByCities, setSpendByCities] = useState([
-    { city: 'Paris', totalSpend: 600 },
-    { city: 'London', totalSpend: 800 },
-    { city: 'Rome', totalSpend: 500 },
-    { city: 'Berlin', totalSpend: 700 },
-    { city: 'Amsterdam', totalSpend: 900 },
+    { city: 'Mumbai', totalSpend: 6000 },
+    { city: 'Delhi', totalSpend: 8000 },
+    { city: 'Bangalore', totalSpend: 5000 },
+    { city: 'Chennai', totalSpend: 7000 },
+    { city: 'Kolkata', totalSpend: 9000 },
   ]);
 
   useEffect(() => {
-    let doughnutChart;
     let barChart;
 
     const createCharts = () => {
-      // Destroy existing charts if they exist
-      if (doughnutChart) {
-        doughnutChart.destroy();
-      }
+      // Destroy existing chart if it exists
       if (barChart) {
         barChart.destroy();
       }
-
-      // Initialize the doughnut chart
-      doughnutChart = new Chart(chartRef.current, {
-        type: 'doughnut',
-        data: {
-          labels: spendByCities.map((city) => city.city),
-          datasets: [
-            {
-              data: spendByCities.map((city) => city.totalSpend),
-              backgroundColor: [
-                '#FF6384',
-                '#36A2EB',
-                '#FFCE56',
-                '#FF9F40',
-                '#9966FF',
-              ],
-              hoverBackgroundColor: [
-                '#FF6384',
-                '#36A2EB',
-                '#FFCE56',
-                '#FF9F40',
-                '#9966FF',
-              ],
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-        },
-      });
 
       // Initialize the bar chart
       barChart = new Chart(barChartRef.current, {
         type: 'bar',
         data: {
-          labels: Array.from({ length: 30 }, (_, i) => i + 1), // Generate labels for 30 days
+          labels: spendByCities.map((city) => city.city),
           datasets: [
             {
               label: 'Total Spend',
-              data: barChartData,
+              data: spendByCities.map((city) => city.totalSpend),
               backgroundColor: '#36A2EB',
             },
           ],
         },
         options: {
           responsive: true,
-          maintainAspectRatio:   false,
+          maintainAspectRatio: false,
           scales: {
             y: {
               beginAtZero: true,
@@ -106,16 +72,39 @@ const InsightsDashboard = () => {
 
     createCharts();
 
-    // Cleanup functions
+    // Cleanup function
     return () => {
-      if (doughnutChart) {
-        doughnutChart.destroy();
-      }
       if (barChart) {
         barChart.destroy();
       }
     };
-  }, [barChartData, spendByCities]);
+  }, [spendByCities]);
+
+  useEffect(() => {
+    const doughnutChart = new Chart(doughnutChartRef.current, {
+      type: 'doughnut',
+      data: {
+        labels: spendByCities.map((city) => city.city),
+        datasets: [
+          {
+            data: spendByCities.map((city) => city.totalSpend),
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8e5ea2', '#3cba9f'],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    });
+
+    // Cleanup function
+    return () => {
+      if (doughnutChart) {
+        doughnutChart.destroy();
+      }
+    };
+  }, [spendByCities]);
 
   const handleDateChange = (event) => {
     const selectedDate = event.target.value;
@@ -201,7 +190,7 @@ const InsightsDashboard = () => {
               <Card sx={{ height: '100%' }}>
                 <CardContent>
                   <Typography variant="h4">Average Booking Window</Typography>
-                  <Typography variant="h6">15 days</Typography>
+                  <Typography variant="h6">14 days</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -221,12 +210,12 @@ const InsightsDashboard = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <Card>
                 <CardContent>
-                  <Typography variant="h4">City-wise Spend</Typography>
+                  <Typography variant="h4">Total Spend by Day</Typography>
                   <Box sx={{ position: 'relative', height: '300px' }}>
-                    <canvas ref={chartRef} />
+                    <canvas ref={barChartRef} />
                   </Box>
                 </CardContent>
               </Card>
@@ -234,9 +223,32 @@ const InsightsDashboard = () => {
             <Grid item xs={12} md={6}>
               <Card>
                 <CardContent>
-                  <Typography variant="h4">Total Spend by Day</Typography>
+                  <Typography variant="h4">Spend by Cities</Typography>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>City</TableCell>
+                        <TableCell>Money Spent</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {spendByCities.map((city) => (
+                        <TableRow key={city.city}>
+                          <TableCell>{city.city}</TableCell>
+                          <TableCell>{city.totalSpend}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h4">Spend by Cities (Doughnut Chart)</Typography>
                   <Box sx={{ position: 'relative', height: '300px' }}>
-                    <canvas ref={barChartRef} />
+                    <canvas ref={doughnutChartRef} />
                   </Box>
                 </CardContent>
               </Card>
