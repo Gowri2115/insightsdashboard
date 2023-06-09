@@ -93,7 +93,7 @@ const InsightsDashboard = () => {
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false,
+          maintainAspectRatio:   false,
           scales: {
             y: {
               beginAtZero: true,
@@ -201,7 +201,7 @@ const InsightsDashboard = () => {
               <Card sx={{ height: '100%' }}>
                 <CardContent>
                   <Typography variant="h4">Average Booking Window</Typography>
-                  <Typography variant="h6">14 days</Typography>
+                  <Typography variant="h6">15 days</Typography>
                 </CardContent>
               </Card>
             </Grid>
